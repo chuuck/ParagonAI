@@ -1,7 +1,7 @@
 <template>
     <div class="flex space-x-5">
         
-            <div class="h-60 w-60 bg-white rounded-3xl shadow-md border border-[#F0F2F5]	">
+            <div class="h-60 w-60 bg-white rounded-3xl shadow-md border border-[#F0F2F5] hover:scale-110 transition-transform duration-300 ease-in-out">
                 <div class="flex items-center justify-center w-[4.5rem] h-[4.5rem] bg-[#5825FC] mt-7 ml-7 rounded-3xl border border-black">
                 
                 <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-database-import" width="38" height="38" viewBox="0 0 24 24" stroke-width="1" stroke="#fff" fill="none" stroke-linecap="round" stroke-linejoin="round">
@@ -18,7 +18,7 @@
                 <p class="text-sm text-[#A09A9E] ml-7 mt-1">First Step</p>
             </div>
             
-            <div class="h-60 w-60 bg-white rounded-3xl shadow-md border border-[#F0F2F5]	">
+            <div class="h-60 w-60 bg-white rounded-3xl shadow-md border border-[#F0F2F5] hover:scale-110 transition-transform duration-300 ease-in-out">
                 <div class="flex items-center justify-center w-[4.5rem] h-[4.5rem] bg-[#5825FC] mt-7 ml-7 rounded-3xl border-black">
                 
                 <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-sparkles" width="38" height="38" viewBox="0 0 24 24" stroke-width="1" stroke="#fff" fill="none" stroke-linecap="round" stroke-linejoin="round">
@@ -27,11 +27,11 @@
                 </svg>
                 
                 </div>
-                <h1 class="text-[#464646] text-lg font-medium ml-7 mt-10">Let AI analyse the info within website</h1>
+                <h1 class="text-[#464646] text-lg font-medium ml-7 mt-10">Let AI analyse the info within source</h1>
                 <p class="text-sm text-[#A09A9E] ml-7 mt-1">Second Step</p>
             </div>
             
-            <div class="h-60 w-60 bg-white rounded-3xl shadow-md border border-[#F0F2F5]	">
+            <div class="h-60 w-60 bg-white rounded-3xl shadow-md border border-[#F0F2F5] hover:scale-110 transition-transform duration-300 ease-in-out">
                 <div class="flex items-center justify-center w-[4.5rem] h-[4.5rem] bg-[#5825FC] mt-7 ml-7 rounded-3xl border-black">
                 
                 <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-message-2-search" width="38" height="38" viewBox="0 0 24 24" stroke-width="1" stroke="#fff" fill="none" stroke-linecap="round" stroke-linejoin="round">

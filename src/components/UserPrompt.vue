@@ -1,5 +1,5 @@
 <template>
-    <div class="h-fit w-4/6 mt-4 ml-auto mr-auto flex">
+    <div class="h-fit w-4/6 ml-auto mr-auto flex">
         <div class=" w-fill rounded-l-3xl flex justify-end">
             <div class="w-10 h-10 rounded-full mt-8">
                 <span class="inline-block h-10 w-10 overflow-hidden rounded-full bg-gray-100">
@@ -12,21 +12,33 @@
         </div>
 
         <div class="w-11/12 flex flex-col">
-            <div class="h-2/6 rounded-tr-3xl p-2">
-            <div class="flex items-center mt-8">
+            <!-- Header Section -->
+            <div class="p-4 rounded-tr-3xl flex items-center mt-6">
                 <p class="font-medium mr-2">User</p>
                 <div class="border-l border-gray-300 h-4 mx-2"></div>
-                <p class="font-light text-gray-300">2:45pm</p>
-            </div>
+                <p class="font-light text-gray-300">{{time}}</p>
             </div>
 
-            <div class="h-4/6 rounded-br-3xl">
-                <p class="ml-2 mr-6 mt-6 mb-12">Can you tell me when was the British Museum built?</p>
+            <!-- Content Section -->
+            <div class="flex-grow rounded-br-3xl ml-4 pb-8">
+                <p class="mr-6">{{user_text}}</p>
             </div>
         </div>
     </div>
 </template>
 
 <script>
-
+export default {
+    name: 'UserPrompt', 
+    props: {
+        user_text: {
+            type: String,
+            required: true,
+        },
+        time: {
+            type: String,
+            required: true,
+        },
+    },
+}
 </script>

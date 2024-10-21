@@ -27,7 +27,7 @@
             <DialogPanel
               class="relative transform overflow-hidden rounded-xl bg-white text-left shadow-2xl transition-all sm:my-8 sm:w-full sm:max-w-lg"
             >
-              <!-- Modal Content -->
+            
               <div class="px-6 py-5 sm:p-6">
                 <div class="sm:flex sm:items-start">
                   <div class="text-center sm:ml-4 sm:mt-0 sm:text-left w-full">
@@ -35,40 +35,25 @@
                       as="h3"
                       class="text-lg font-bold leading-6 text-gray-800"
                     >
-                      Add Knowledge
+                      Enter OpenAI API Key
                     </DialogTitle>
                     <div class="mt-4 w-full">
                       <label
-                        for="title"
                         class="block text-sm font-medium text-gray-700 mb-2"
-                        >Knowledge Title</label
+                        >API Key</label
                       >
                       <input
                         type="text"
-                        id="title"
+                        id="key"
                         class="py-3 shadow-sm px-4 block w-full border border-gray-300 rounded-lg text-sm focus:border-blue-600 focus:ring focus:ring-blue-600 focus:ring-opacity-50"
-                        placeholder="E.g., Benefits of Remote Work"
-                        v-model="title"
-                      />
-                    </div>
-                    <div class="mt-4 w-full">
-                      <label
-                        for="url"
-                        class="block text-sm font-medium text-gray-700 mb-2"
-                        >Resource URL</label
-                      >
-                      <input
-                        type="text"
-                        id="url"
-                        class="py-3 shadow-sm px-4 block w-full border border-gray-300 rounded-lg text-sm focus:border-blue-600 focus:ring focus:ring-blue-600 focus:ring-opacity-50"
-                        placeholder="https://example.com/article"
-                        v-model="url"
+                        placeholder="sk-..."
+                        v-model="api_key"
                       />
                     </div>
                   </div>
                 </div>
               </div>
-              <!-- Modal Buttons -->
+
               <div
                 class="bg-gray-50 px-6 py-4 flex justify-end space-x-3 sm:space-x-4"
               >
