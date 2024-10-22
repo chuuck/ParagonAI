@@ -60,7 +60,7 @@
                 <button
                   type="button"
                   class="inline-flex justify-center rounded-md border border-transparent bg-indigo-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
-                  @click="addKnowledge"
+                  @click="addKey"
                 >
                   Add
                 </button>
@@ -83,6 +83,7 @@
 <script>
 import { ref } from 'vue';
 import { Dialog, DialogPanel, DialogTitle, TransitionChild, TransitionRoot } from '@headlessui/vue';
+import axios from 'axios';
 
 export default {
   props: {
@@ -100,26 +101,28 @@ export default {
   },
   data() {
     return {
-      title: '',
-      url: '',
+      api_key: '',
     };
   },
   methods: {
     closeModal() {
       this.$emit('close-modal');
     },
-    addKnowledge() {
-      console.log('Adding knowledge');
+    addKey() {
+      var bodyFormData = new FormData();
+      bodyFormData.append('api_key', this.api_key);
 
-      this.$emit('addKnowledge', {
-        title: this.title,
-        url: this.url,
+      axios({
+        method: "post",
+        url: "http://127.0.0.1:8000/set_openai_api_key",
+        data: bodyFormData,
+        headers: { "Content-Type": "application/json" },
+      }).then((response) => {
+        this.closeModal();
+      }).catch(function (response) {
+        console.log(response);
       });
 
-      this.$emit('close-modal');
-
-      this.title = '';
-      this.url = '';
     },
   },
 };
