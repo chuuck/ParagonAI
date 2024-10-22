@@ -17,7 +17,9 @@
           :key="index"
           :title="item.title"
           :url="item.url"
+          :state="item.is_checked"
           @delete-knowledge="deleteKnowledge"
+          @ticked="onKnowledgeTicked"
         />
       </div>
    
@@ -64,6 +66,7 @@ import { PlusIcon } from '@heroicons/vue/20/solid'
 import { Cog6ToothIcon as Cog6ToothIconOutline } from '@heroicons/vue/24/outline'
 import AIResponsePrompt from './components/AIResponsePrompt.vue'
 import UserPrompt from './components/UserPrompt.vue'
+import axios from 'axios';
 
 
 export default {
@@ -91,38 +94,49 @@ export default {
         {
           title: 'Ask questions and find insights',
           url: 'https://www.google.com',
+          is_checked: false,
         },
         {
           title: 'Learning Vue.js',
           url: 'https://vuejs.org',
+          is_checked: false,
         },
         {
           title: 'Vue 3 Documentation',
           url: 'https://v3.vuejs.org',
+          is_checked: true,
         },
         {
           title: 'Tailwind CSS Guide',
           url: 'https://tailwindcss.com',
+          is_checked: false,
         },
       ],
       chat: [
-        {
-          type: 'ai',
-          message: 'Hello! How can I help you today?',
-          time: '2:45pm',
-        },
-        {
-          type: 'user',
-          message: 'What is the capital of France?',
-          time: '2:46pm',
-        },
-        {
-          type: 'ai',
-          message: "The British Museum, one of the world's largest and most comprehensive museums, was established in 1753 with the acquisition of a significant collection of antiquities by Sir Hans Sloane. Initially housed in a private residence in Bloomsbury, London, the museum was opened to the public in 1759. Over the centuries, the museum's collection has grown exponentially, encompassing a vast array of artifacts from around the globe, including ancient Egyptian mummies, Greek sculptures, Roman mosaics, and treasures from the Far East. Today, the British Museum remains a cultural cornerstone, attracting millions of visitors each year and serving as a vital resource for scholars and the public alike.",
-          time: '2:46pm',
-        }
       ],
     };
+  },
+  created() {
+      axios({
+        method: "get",
+        url: "http://127.0.0.1:8000/get_knowledge_list",
+        headers: { "Content-Type": "application/json" },
+      }).then((response) => {
+        var urls = response.data.urls;
+
+        for (let i = 0; i < urls.length; i++) {
+          this.knowledge.push({
+            title: urls[i],
+            url: urls[i],
+            is_checked: false,
+          });
+        }
+        
+        console.log(response);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
   },
   methods: {
     getFormattedTime() {
@@ -145,12 +159,44 @@ export default {
       this.isSettingsModalOpen = true;
     },
     onAddingKnowledge(knowledge) {
+
+      var bodyFormData = new FormData();
+      bodyFormData.append('url', knowledge.url);
+
+      axios({
+        method: "post",
+        url: "http://127.0.0.1:8000/add_knowledge",
+        data: bodyFormData,
+        headers: { "Content-Type": "application/json" },
+      }).then((response) => {
+        console.log(response);
+      }).catch(function (response) {
+        console.log(response);
+      });
+
+      console.log(knowledge)
       this.knowledge.push(knowledge)
+      
     },
     deleteKnowledge(title) {
 
       for (let i = 0; i < this.knowledge.length; i++) {
         if (this.knowledge[i].title === title) {
+
+          var bodyFormData = new FormData();
+          bodyFormData.append('url', this.knowledge[i].url);
+
+          axios({
+            method: "post",
+            url: "http://127.0.0.1:8000/remove_knowledge",
+            data: bodyFormData,
+            headers: { "Content-Type": "application/json" },
+          }).then((response) => {
+            this.knowledge.push(knowledge)
+          }).catch(function (response) {
+            console.log(response);
+          });
+
           this.knowledge.splice(i, 1);
           break;
         }
@@ -161,18 +207,45 @@ export default {
       this.is_info_showing = false;
       this.is_chat_showing = true;
 
+      var checked_urls = this.knowledge.filter((item) => item.is_checked).map((item) => item.url);
+      var bodyFormData = new FormData();
+      bodyFormData.append('query', query);
+      bodyFormData.append('url', checked_urls);
+
       this.chat.push({
         type: 'user',
         message: query,
         time: this.getFormattedTime(),
       });
 
-      this.chat.push({
-        type: 'ai',
-        message: 'I am sorry, I do not have an answer to that question at the moment.',
-        time: this.getFormattedTime(),
+      axios({
+        method: "post",
+        url: "http://127.0.0.1:8000/rag_query",
+        data: bodyFormData,
+        headers: { "Content-Type": "application/json" },
+        }).then((response) => {
+
+          this.chat.push({
+            type: 'ai',
+            message: response.data.result,
+            time: this.getFormattedTime(),
+          });
+
+          console.log(response)
+        }).catch(function (response) {
+          console.log(response);
       });
-    }
+
+    },
+    onKnowledgeTicked(isChecked, url) {
+
+      for (let i = 0; i < this.knowledge.length; i++) {
+        if (this.knowledge[i].url === url) {
+          this.knowledge[i].is_checked = isChecked;
+          break;
+        }
+      }
+    },
   },
 };
 </script>
