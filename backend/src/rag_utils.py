@@ -8,8 +8,6 @@ from db_utils import add_to_db, get_existing_urls, retrieve_docs
 from scraper import scrape_to_documents
 
 load_dotenv()
-EMBEDDING_MODEL = os.getenv("EMBEDDING_MODEL")
-GENERATION_MODEL = os.getenv("GENERATION_MODEL")
 PROMPT_TEMPLATE = """
 Answer the question based only on the following context:
 {context}
