@@ -45,7 +45,7 @@ Make sure you have the following installed:
     ```bash
     DB_DIR_NAME="chroma_db"
     DB_COLLECTION_NAME="langchain"
-    OPENAI_API_KEY= #optional - you can use set_openai_api_key/ endpoint to set it or this env veriable
+    OPENAI_API_KEY= # Optional - you can use this env variable or set_openai_api_key/ endpoint to set value
     ```
 
 2. Run the development server using Uvicorn:
