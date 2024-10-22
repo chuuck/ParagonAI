@@ -2,8 +2,7 @@ import os
 
 from dotenv import load_dotenv
 from langchain.prompts import PromptTemplate
-from langchain_community.llms.huggingface_pipeline import HuggingFacePipeline
-from langchain_huggingface import HuggingFaceEmbeddings
+from langchain_openai import ChatOpenAI, OpenAIEmbeddings
 
 from db_utils import add_to_db, get_existing_urls, retrieve_docs
 from scraper import scrape_to_documents
@@ -26,7 +25,7 @@ def add_new_knowledge(url: str):
         print(f"Documents from {url} already exist.")
     else:
         # Scrape and save to DB
-        embedder = HuggingFaceEmbeddings(model_name=EMBEDDING_MODEL)
+        embedder = OpenAIEmbeddings()
         docs = scrape_to_documents(url)
         add_to_db(embedder, docs)
 
@@ -34,7 +33,7 @@ def add_new_knowledge(url: str):
 def run_rag_pipeline(url: str, query: str):
     print("Running RAG pipeline.")
     # Create embeddings for the document chunks
-    embedder = HuggingFaceEmbeddings(model_name=EMBEDDING_MODEL)
+    embedder = OpenAIEmbeddings()
 
     # Query the vector store
     relevant_docs = retrieve_docs(url, embedder, query)
@@ -49,26 +48,22 @@ def run_rag_pipeline(url: str, query: str):
     prompt = prompt_template.format(context=context_text, question=query)
 
     # Initialise model for generating the response
-    model = HuggingFacePipeline.from_model_id(
-        model_id=GENERATION_MODEL,
-        task="text-generation",
-        pipeline_kwargs={"max_new_tokens": 300},
-    )
-    model.pipeline.tokenizer.pad_token_id = model.pipeline.tokenizer.eos_token_id
+    model = ChatOpenAI()
 
     # Generate response
-    response_text = model.invoke(prompt)
+    response_text = model.invoke(prompt).content
 
     # Get sources of the relevant documents
     sources = set([doc.metadata.get("source", None) for doc in relevant_docs])
 
     # Format and return response including generated text and sources
-    formatted_response = f"Response: {response_text}\nSource: {sources}"
+    formatted_response = f"{response_text}\nSource: {sources}"
     return formatted_response
 
 
 if __name__ == "__main__":
     url = "https://en.wikipedia.org/wiki/Harry_Potter"
     # add_new_knowledge(url)
-    query = "When did the the firsl film air?"
-    run_rag_pipeline(url, query)
+    query = "how many films are there?"
+    response = run_rag_pipeline(url, query)
+    print(response)
