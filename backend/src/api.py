@@ -5,7 +5,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 
-from db_utils import get_existing_urls
+from db_utils import get_existing_urls, remove_from_db
 from rag_utils import add_new_knowledge, run_rag_pipeline
 
 # Setup FastAPI app
@@ -47,6 +47,15 @@ async def add_knowledge(knowledge: Knowledge):
     Add a new website to the DB.
     """
     add_new_knowledge(knowledge.url)
+    return {"message": "success"}
+
+
+@app.post("/remove_knowledge")
+async def remove_knowledge(knowledge: Knowledge):
+    """
+    Remove specific website documents from a DB.
+    """
+    remove_from_db(knowledge.url)
     return {"message": "success"}
 
 
