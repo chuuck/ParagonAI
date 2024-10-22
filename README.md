@@ -43,10 +43,9 @@ Make sure you have the following installed:
 
 1. Create .env file and add the following values (field values are examples):
     ```bash
-    EMBEDDING_MODEL='sentence-transformers/all-MiniLM-L6-v2'
-    GENERATION_MODEL="microsoft/phi-1_5"
     DB_DIR_NAME="chroma_db"
     DB_COLLECTION_NAME="langchain"
+    OPENAI_API_KEY= # Optional - you can use this env variable or set_openai_api_key/ endpoint to set value
     ```
 
 2. Run the development server using Uvicorn:
