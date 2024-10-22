@@ -18,22 +18,28 @@ Answer the question based on the above context: {question}
 """
 
 
-def add_new_knowledge(url: str):
+def add_new_knowledge(url: str, api_key: str = None):
     print("Adding new knowledge to DB.")
+    if not api_key:
+        api_key = os.getenv("OPENAI_API_KEY")
+
     existing_urls = get_existing_urls()
     if url in existing_urls:
         print(f"Documents from {url} already exist.")
     else:
         # Scrape and save to DB
-        embedder = OpenAIEmbeddings()
+        embedder = OpenAIEmbeddings(openai_api_key=api_key)
         docs = scrape_to_documents(url)
         add_to_db(embedder, docs)
 
 
-def run_rag_pipeline(url: str, query: str):
+def run_rag_pipeline(url: str, query: str, api_key: str = None):
     print("Running RAG pipeline.")
+    if not api_key:
+        api_key = os.getenv("OPENAI_API_KEY")
+
     # Create embeddings for the document chunks
-    embedder = OpenAIEmbeddings()
+    embedder = OpenAIEmbeddings(openai_api_key=api_key)
 
     # Query the vector store
     relevant_docs = retrieve_docs(url, embedder, query)
@@ -48,7 +54,7 @@ def run_rag_pipeline(url: str, query: str):
     prompt = prompt_template.format(context=context_text, question=query)
 
     # Initialise model for generating the response
-    model = ChatOpenAI()
+    model = ChatOpenAI(openai_api_key=api_key)
 
     # Generate response
     response_text = model.invoke(prompt).content
