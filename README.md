@@ -1,18 +1,64 @@
-# Vue 3 + Vite
+<p align="center">
+  <img src="https://github.com/chuuck/ParagonAI/blob/feature/selecting_kb_sources/assets/Paragon_Banner.jpg" />
+</p>
 
-This template should help get you started developing with Vue 3 in Vite. The template uses Vue 3 `<script setup>` SFCs, check out the [script setup docs](https://v3.vuejs.org/api/sfc-script-setup.html#sfc-script-setup) to learn more.
+#
+ParagonAI is an open-source project designed to make interacting with large bodies of information simple and efficient. By leveraging Retrieval-Augmented Generation (RAG), ParagonAI allows users to build a custom knowledge base by providing URLs, from which it extracts, stores, and indexes relevant content. Users can then ask natural language questions about the information, receiving precise, contextually relevant answers.
 
-Learn more about IDE Support for Vue in the [Vue Docs Scaling up Guide](https://vuejs.org/guide/scaling-up/tooling.html#ide-support).
+## 1. Getting Started :rocket:
 
-Getting Started
+### 1.1. Front-End
 
-To install all packages
+To install all packages and start the front-end app run these commands
 
 ```
+cd frontend
 npm install
-```
-
-To run the front-end app
-```
 npm run dev
 ```
+
+### 1.2. Back-end
+
+#### Prerequisites
+Make sure you have the following installed:
+- Python 3.9+
+- Pip (package installer for Python)
+  
+#### Installation
+
+
+1. Create a virtual environment and activate it:
+    ```bash
+    cd backend
+    python3 -m venv env
+    source env/bin/activate  # On Windows use `env\Scripts\activate`
+    ```
+
+2. Install the dependencies:
+    ```bash
+    pip install -r requirements.txt
+    ```
+
+#### Running the App
+
+1. Create .env file and add the following values (field values are examples):
+    ```bash
+    EMBEDDING_MODEL='sentence-transformers/all-MiniLM-L6-v2'
+    GENERATION_MODEL="microsoft/phi-1_5"
+    DB_DIR_NAME="chroma_db"
+    DB_COLLECTION_NAME="langchain"
+    ```
+
+2. Run the development server using Uvicorn:
+    ```bash
+    fastapi dev src/api.py
+    ```
+
+3. The app will be available at `http://127.0.0.1:8000`.
+
+#### Testing the API
+
+To explore and test the API, you can use the automatically generated OpenAPI docs provided by FastAPI:
+- OpenAPI docs: `http://127.0.0.1:8000/docs`
+- ReDoc: `http://127.0.0.1:8000/redoc`
+
