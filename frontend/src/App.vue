@@ -10,6 +10,14 @@
         <PlusIcon class="h-5 w-5" aria-hidden="true" />
         Add Knowledge
       </button>
+
+      <button
+        type="button"
+        @click="select_knowledge"
+        class="w-full flex justify-center items-center rounded-lg mt-6 h-10 bg-[#5825FC] text-white border hover:bg-indigo-700 px-2.5 py-1.5 text-sm font-semibold shadow-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#5825FC] gap-x-1.5">
+        {{ select_button_text}}
+      </button>
+
  
       <div class="mt-2 overflow-y-auto max-h-[calc(100vh-200px)] mb-4 pb-4">
         <KnowledgeBase
@@ -18,6 +26,7 @@
           :title="item.title"
           :url="item.url"
           :state="item.is_checked"
+          :select_mode="select_mode"
           @delete-knowledge="deleteKnowledge"
           @ticked="onKnowledgeTicked"
         />
@@ -81,7 +90,8 @@ export default {
     Cog6ToothIconOutline,
     SettingsModal,
     AIResponsePrompt,
-    UserPrompt
+    UserPrompt  
+  
   },
 
   data() {
@@ -90,27 +100,29 @@ export default {
       isSettingsModalOpen: false,
       is_info_showing: true,
       is_chat_showing: false,
+      select_mode: false,
+      select_button_text: "Select Knowledge",
       knowledge: [
-        {
-          title: 'Ask questions and find insights',
-          url: 'https://www.google.com',
-          is_checked: false,
-        },
-        {
-          title: 'Learning Vue.js',
-          url: 'https://vuejs.org',
-          is_checked: false,
-        },
-        {
-          title: 'Vue 3 Documentation',
-          url: 'https://v3.vuejs.org',
-          is_checked: true,
-        },
-        {
-          title: 'Tailwind CSS Guide',
-          url: 'https://tailwindcss.com',
-          is_checked: false,
-        },
+        // {
+        //   title: 'Ask questions and find insights',
+        //   url: 'https://www.google.com',
+        //   is_checked: false,
+        // },
+        // {
+        //   title: 'Learning Vue.js',
+        //   url: 'https://vuejs.org',
+        //   is_checked: false,
+        // },
+        // {
+        //   title: 'Vue 3 Documentation',
+        //   url: 'https://v3.vuejs.org',
+        //   is_checked: true,
+        // },
+        // {
+        //   title: 'Tailwind CSS Guide',
+        //   url: 'https://tailwindcss.com',
+        //   is_checked: false,
+        // },
       ],
       chat: [
       ],
@@ -139,6 +151,15 @@ export default {
       });
   },
   methods: {
+    select_knowledge(){
+      this.select_mode = !this.select_mode;
+
+      if (this.select_mode) {
+        this.select_button_text = "Select All";
+      }else{
+        this.select_button_text = "Select Knowledge";
+      }
+    },
     getFormattedTime() {
       const now = new Date();
       let hours = now.getHours();
@@ -207,7 +228,15 @@ export default {
       this.is_info_showing = false;
       this.is_chat_showing = true;
 
-      var checked_urls = this.knowledge.filter((item) => item.is_checked).map((item) => item.url);
+      if (this.select_mode) {
+        var checked_urls = this.knowledge.filter((item) => item.is_checked).map((item) => item.url);
+
+      }else{
+        var checked_urls = this.knowledge.map((item) => item.url);
+        console.log("Checked URLs")
+        console.log(checked_urls)
+      }
+
       var bodyFormData = new FormData();
       bodyFormData.append('query', query);
       bodyFormData.append('url', checked_urls);
