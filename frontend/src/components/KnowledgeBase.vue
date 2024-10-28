@@ -1,7 +1,15 @@
 <template>
     <div class="flex h-16 w-fullmr-4  bg-white rounded-lg shadow-sm hover:border-[#e5e6e7] border-2 border-[#F7F8FA] cursor-pointer mt-4">
         <div class="w-1/5 flex items-center justify-center">
-            <input type="checkbox" class="accent-[#5825FC] transform scale-125" @change="onTicked" v-model="localState">
+
+            <BookmarkSquareIcon v-if="!select_mode" class="h-5 w-5" aria-hidden="true" />
+            <input 
+                v-else 
+                type="checkbox" 
+                class="accent-[#5825FC] transform scale-125" 
+                @change="onTicked" 
+                v-model="localState" 
+            />
         </div>
 
         <div class="w-3/5 flex flex-col  justify-center text-sm font-medium">
@@ -18,8 +26,13 @@
 </template>
 
 <script>
+
+import { BookmarkSquareIcon } from '@heroicons/vue/24/outline'
 export default {
     name: 'KnowledgeBase',
+    components: {
+        BookmarkSquareIcon
+    },
     props: {
         title: {
             type: String,
@@ -32,6 +45,11 @@ export default {
         state: {
             type: Boolean,
             required: true,
+        },
+        select_mode: {
+            type: Boolean,
+            required: false,
+            default: true,
         }
     },
     computed: {
