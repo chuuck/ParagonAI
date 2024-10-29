@@ -53,18 +53,18 @@ def add_to_db(embedder: Embeddings, docs: List[Document]):
         db.add_documents(documents=docs)
 
 
-def remove_from_db(url: str):
+def remove_from_db(urls: List[str]):
     persistent_directory = _get_persistent_directory()
     if not os.path.exists(persistent_directory):
         print("DB does not exist. Cannot delete entries.")
     else:
         db = _get_db_object(persistent_directory)
-        ids = db.get(where={"source": f"{url}"}, include=[]).get("ids")
+        ids = db.get(where={"source": {"$in": urls}}, include=[]).get("ids")
         if ids:
             db.delete(ids)
-            print(f"Successfully deleted entries from {url}.")
+            print(f"Successfully deleted entries from {urls}.")
         else:
-            print(f"No entries found for {url} .")
+            print(f"No entries found for {urls} .")
 
 
 def retrieve_docs(

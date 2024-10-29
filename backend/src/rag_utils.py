@@ -17,19 +17,20 @@ Answer the question based on the above context: {question}
 """
 
 
-def add_new_knowledge(url: str, api_key: str = None):
+def add_new_knowledge(urls: List[str], api_key: str = None):
     print("Adding new knowledge to DB.")
     if not api_key:
         api_key = os.getenv("OPENAI_API_KEY")
 
     existing_urls = get_existing_urls()
-    if url in existing_urls:
-        print(f"Documents from {url} already exist.")
-    else:
-        # Scrape and save to DB
-        embedder = OpenAIEmbeddings(openai_api_key=api_key)
-        docs = scrape_to_documents(url)
-        add_to_db(embedder, docs)
+    for url in urls:
+        if url in existing_urls:
+            print(f"Documents from {url} already exist.")
+        else:
+            # Scrape and save to DB
+            embedder = OpenAIEmbeddings(openai_api_key=api_key)
+            docs = scrape_to_documents(url)
+            add_to_db(embedder, docs)
 
 
 def run_rag_pipeline(urls: List[str], query: str, api_key: str = None):

@@ -30,7 +30,7 @@ class RAGQuery(BaseModel):
 
 
 class Knowledge(BaseModel):
-    url: str | List[str]
+    urls: List[str]
 
 
 class OpenAIAPIKey(BaseModel):
@@ -54,7 +54,7 @@ async def add_knowledge(knowledge: Knowledge):
     Add a new website to the DB.
     """
     api_key = api_key_store.get("OPENAI_API_KEY")
-    add_new_knowledge(knowledge.url, api_key)
+    add_new_knowledge(knowledge.urls, api_key)
     return {"message": "Knowledge has been successfully added."}
 
 
@@ -63,7 +63,7 @@ async def remove_knowledge(knowledge: Knowledge):
     """
     Remove specific website documents from a DB.
     """
-    remove_from_db(knowledge.url)
+    remove_from_db(knowledge.urls)
     return {"message": "Knowledge has been successfully removed."}
 
 
