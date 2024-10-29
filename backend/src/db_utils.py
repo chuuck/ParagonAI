@@ -37,6 +37,21 @@ def get_existing_urls():
         return urls
 
 
+def get_existing_urls_and_titles():
+    persistent_directory = _get_persistent_directory()
+    if not os.path.exists(persistent_directory):
+        print("DB is empty. Please add entries.")
+        return []
+    else:
+        db = _get_db_object(persistent_directory)
+        metadata = db.get(include=["metadatas"]).get("metadatas")
+        url_title_list = [
+            {"source": doc.get("source"), "title": doc.get("title")} for doc in metadata
+        ]
+        url_title_set = [dict(t) for t in {tuple(d.items()) for d in url_title_list}]
+        return url_title_set
+
+
 def add_to_db(embedder: Embeddings, docs: List[Document]):
     persistent_directory = _get_persistent_directory()
     if not os.path.exists(persistent_directory):

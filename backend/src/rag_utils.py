@@ -17,20 +17,21 @@ Answer the question based on the above context: {question}
 """
 
 
-def add_new_knowledge(urls: List[str], api_key: str = None):
+def add_new_knowledge(url: str, title: str, api_key: str = None):
     print("Adding new knowledge to DB.")
     if not api_key:
         api_key = os.getenv("OPENAI_API_KEY")
 
     existing_urls = get_existing_urls()
-    for url in urls:
-        if url in existing_urls:
-            print(f"Documents from {url} already exist.")
-        else:
-            # Scrape and save to DB
-            embedder = OpenAIEmbeddings(openai_api_key=api_key)
-            docs = scrape_to_documents(url)
-            add_to_db(embedder, docs)
+    if url in existing_urls:
+        print(f"Documents from {url} already exist.")
+    else:
+        # Scrape and save to DB
+        embedder = OpenAIEmbeddings(openai_api_key=api_key)
+        docs = scrape_to_documents(url)
+        for doc in docs:
+            doc.metadata["title"] = title
+        add_to_db(embedder, docs)
 
 
 def run_rag_pipeline(urls: List[str], query: str, api_key: str = None):
@@ -69,10 +70,11 @@ def run_rag_pipeline(urls: List[str], query: str, api_key: str = None):
 
 if __name__ == "__main__":
     urls = [
-        "https://en.wikipedia.org/wiki/Harry_Potter",
-        "https://en.wikipedia.org/wiki/Gilmore_Girls",
+        "https://en.wikipedia.org/wiki/Marvel_Cinematic_Universe",
+        "https://en.wikipedia.org/wiki/DC_Extended_Universe",
     ]
-    # add_new_knowledge(urls)
-    query = "Compare Harry Potter and Gilmore Girls."
+    add_new_knowledge(urls[0], "Marvel")
+    add_new_knowledge(urls[1], "DC")
+    query = "Compare Marvel and DC."
     response = run_rag_pipeline(urls, query)
     print(response)

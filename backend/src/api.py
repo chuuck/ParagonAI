@@ -5,7 +5,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 
-from db_utils import get_existing_urls, remove_from_db
+from db_utils import get_existing_urls_and_titles, remove_from_db
 from rag_utils import add_new_knowledge, run_rag_pipeline
 
 # Setup FastAPI app
@@ -29,7 +29,12 @@ class RAGQuery(BaseModel):
     query: str
 
 
-class Knowledge(BaseModel):
+class URLTitlePair(BaseModel):
+    url: str
+    title: str
+
+
+class URLList(BaseModel):
     urls: List[str]
 
 
@@ -49,17 +54,23 @@ async def rag_query(rag_request: RAGQuery):
 
 
 @app.post("/add_knowledge")
-async def add_knowledge(knowledge: Knowledge):
+async def add_knowledge(knowledge: List[URLTitlePair]):
     """
     Add a new website to the DB.
     """
     api_key = api_key_store.get("OPENAI_API_KEY")
-    add_new_knowledge(knowledge.urls, api_key)
+
+    for item in knowledge:
+        url = item.url
+        title = item.title
+        print(f"Processing URL: {url} with title: {title}")
+        add_new_knowledge(url, title, api_key)
+
     return {"message": "Knowledge has been successfully added."}
 
 
 @app.post("/remove_knowledge")
-async def remove_knowledge(knowledge: Knowledge):
+async def remove_knowledge(knowledge: URLList):
     """
     Remove specific website documents from a DB.
     """
@@ -72,8 +83,8 @@ async def get_knowledge_list():
     """
     Retrieve a list of URLs which are currently being stored in the DB.
     """
-    urls = get_existing_urls()
-    return {"urls": urls}
+    url_title_set = get_existing_urls_and_titles()
+    return {"knowledge_list": url_title_set}
 
 
 @app.post("/set_openai_api_key")
