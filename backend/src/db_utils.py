@@ -68,11 +68,11 @@ def remove_from_db(url: str):
 
 
 def retrieve_docs(
-    url: str,
+    urls: List[str],
     embedder: Embeddings,
     query: str,
     search_type: str = "similarity",
-    search_kwargs: int = 3,
+    search_kwargs_k: int = 3,
 ):
     persistent_directory = _get_persistent_directory()
     if not os.path.exists(persistent_directory):
@@ -82,7 +82,7 @@ def retrieve_docs(
         db = _get_db_object(persistent_directory, embedder)
         retriever = db.as_retriever(
             search_type=search_type,
-            search_kwargs={"k": search_kwargs, "filter": {"source": url}},
+            search_kwargs={"k": search_kwargs_k, "filter": {"source": {"$in": urls}}},
         )
         relevant_docs = retriever.invoke(query)
         return relevant_docs

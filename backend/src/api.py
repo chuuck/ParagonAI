@@ -25,7 +25,7 @@ app.add_middleware(
 
 
 class RAGQuery(BaseModel):
-    url: str | List[str]
+    urls: List[str]
     query: str
 
 
@@ -44,7 +44,7 @@ async def rag_query(rag_request: RAGQuery):
     an answer from an LLM.
     """
     api_key = api_key_store.get("OPENAI_API_KEY")
-    result = run_rag_pipeline(rag_request.url, rag_request.query, api_key)
+    result = run_rag_pipeline(rag_request.urls, rag_request.query, api_key)
     return {"result": result}
 
 

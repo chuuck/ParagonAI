@@ -1,4 +1,5 @@
 import os
+from typing import List
 
 from dotenv import load_dotenv
 from langchain.prompts import PromptTemplate
@@ -31,7 +32,7 @@ def add_new_knowledge(url: str, api_key: str = None):
         add_to_db(embedder, docs)
 
 
-def run_rag_pipeline(url: str, query: str, api_key: str = None):
+def run_rag_pipeline(urls: List[str], query: str, api_key: str = None):
     print("Running RAG pipeline.")
     if not api_key:
         api_key = os.getenv("OPENAI_API_KEY")
@@ -40,7 +41,7 @@ def run_rag_pipeline(url: str, query: str, api_key: str = None):
     embedder = OpenAIEmbeddings(openai_api_key=api_key)
 
     # Query the vector store
-    relevant_docs = retrieve_docs(url, embedder, query)
+    relevant_docs = retrieve_docs(urls, embedder, query)
     if len(relevant_docs) == 0:
         return "Unable to find matching results. Check knowledge base is not empty."
 
@@ -66,8 +67,11 @@ def run_rag_pipeline(url: str, query: str, api_key: str = None):
 
 
 if __name__ == "__main__":
-    url = "https://en.wikipedia.org/wiki/Harry_Potter"
-    # add_new_knowledge(url)
-    query = "how many films are there?"
-    response = run_rag_pipeline(url, query)
+    urls = [
+        "https://en.wikipedia.org/wiki/Harry_Potter",
+        "https://en.wikipedia.org/wiki/Gilmore_Girls",
+    ]
+    # add_new_knowledge(urls)
+    query = "Compare Harry Potter and Gilmore Girls."
+    response = run_rag_pipeline(urls, query)
     print(response)
