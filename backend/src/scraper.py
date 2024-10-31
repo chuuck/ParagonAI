@@ -2,7 +2,6 @@ from langchain.text_splitter import CharacterTextSplitter
 from langchain_community.document_loaders import WebBaseLoader
 
 
-
 def scrape_to_documents(url: str, chunk_size: int = 500, chunk_overlap: int = 50):
     print(f"Scraping data from {url}")
     loader = WebBaseLoader(url)

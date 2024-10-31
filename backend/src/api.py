@@ -5,7 +5,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 
-from db_utils import get_existing_urls, remove_from_db
+from db_utils import get_existing_urls_and_titles, remove_from_db
 from rag_utils import add_new_knowledge, run_rag_pipeline
 
 # Setup FastAPI app
@@ -25,12 +25,17 @@ app.add_middleware(
 
 
 class RAGQuery(BaseModel):
-    url: str | List[str]
+    urls: List[str]
     query: str
 
 
-class Knowledge(BaseModel):
-    url: str | List[str]
+class URLTitlePair(BaseModel):
+    url: str
+    title: str
+
+
+class URLList(BaseModel):
+    urls: List[str]
 
 
 class OpenAIAPIKey(BaseModel):
@@ -44,26 +49,32 @@ async def rag_query(rag_request: RAGQuery):
     an answer from an LLM.
     """
     api_key = api_key_store.get("OPENAI_API_KEY")
-    result = run_rag_pipeline(rag_request.url, rag_request.query, api_key)
+    result = run_rag_pipeline(rag_request.urls, rag_request.query, api_key)
     return {"result": result}
 
 
 @app.post("/add_knowledge")
-async def add_knowledge(knowledge: Knowledge):
+async def add_knowledge(knowledge: List[URLTitlePair]):
     """
     Add a new website to the DB.
     """
     api_key = api_key_store.get("OPENAI_API_KEY")
-    add_new_knowledge(knowledge.url, api_key)
+
+    for item in knowledge:
+        url = item.url
+        title = item.title
+        print(f"Processing URL: {url} with title: {title}")
+        add_new_knowledge(url, title, api_key)
+
     return {"message": "Knowledge has been successfully added."}
 
 
 @app.post("/remove_knowledge")
-async def remove_knowledge(knowledge: Knowledge):
+async def remove_knowledge(knowledge: URLList):
     """
     Remove specific website documents from a DB.
     """
-    remove_from_db(knowledge.url)
+    remove_from_db(knowledge.urls)
     return {"message": "Knowledge has been successfully removed."}
 
 
@@ -72,8 +83,8 @@ async def get_knowledge_list():
     """
     Retrieve a list of URLs which are currently being stored in the DB.
     """
-    urls = get_existing_urls()
-    return {"urls": urls}
+    url_title_set = get_existing_urls_and_titles()
+    return {"knowledge_list": url_title_set}
 
 
 @app.post("/set_openai_api_key")
