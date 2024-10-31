@@ -6,7 +6,8 @@
       <button
         type="button"
         @click="open_url_modal"
-        class="w-full flex justify-center items-center rounded-lg mt-6 h-10 bg-[#F7F8FA] text-black border border-dashed hover:bg-[#EEEFF0] border-[#5825FC] px-2.5 py-1.5 text-sm font-semibold shadow-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#5825FC] gap-x-1.5">
+        class="w-full flex justify-center items-center rounded-lg mt-6 h-10 bg-[#F7F8FA] text-black border border-dashed hover:bg-[#EEEFF0] border-[#5825FC] px-2.5 py-1.5 text-sm font-semibold shadow-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#5825FC] gap-x-1.5"
+      >
         <PlusIcon class="h-5 w-5" aria-hidden="true" />
         Add Knowledge
       </button>
@@ -14,11 +15,11 @@
       <button
         type="button"
         @click="select_knowledge"
-        class="w-full flex justify-center items-center rounded-lg mt-6 h-10 bg-[#5825FC] text-white border hover:bg-indigo-700 px-2.5 py-1.5 text-sm font-semibold shadow-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#5825FC] gap-x-1.5">
-        {{ select_button_text}}
+        class="w-full flex justify-center items-center rounded-lg mt-6 h-10 bg-[#5825FC] text-white border hover:bg-indigo-700 px-2.5 py-1.5 text-sm font-semibold shadow-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#5825FC] gap-x-1.5"
+      >
+        {{ select_button_text }}
       </button>
 
- 
       <div class="mt-2 overflow-y-auto max-h-[calc(100vh-200px)] mb-4 pb-4">
         <KnowledgeBase
           v-for="(item, index) in knowledge"
@@ -31,23 +32,24 @@
           @ticked="onKnowledgeTicked"
         />
       </div>
-   
+
       <button
         type="button"
         @click="open_settings_modal"
-        class="w-full flex justify-center items-center rounded-lg h-10 bg-[#5825FC] mt-auto text-white hover:bg-indigo-700 px-2.5 py-1.5 text-sm font-medium shadow-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-700 gap-x-1.5">
+        class="w-full flex justify-center items-center rounded-lg h-10 bg-[#5825FC] mt-auto text-white hover:bg-indigo-700 px-2.5 py-1.5 text-sm font-medium shadow-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-700 gap-x-1.5"
+      >
         <Cog6ToothIconOutline class="h-5 w-5" aria-hidden="true" />
         Settings
       </button>
     </div>
 
     <div class="w-[80%] bg-gradient-to-tl from-[#E9EBF9] to-white flex flex-col mt-4 mr-4 rounded-t-3xl shadow-sm border-2">
-      <Intro v-if="is_info_showing"/>
+      <Intro v-if="is_info_showing" />
 
       <div v-if="is_chat_showing" class="overflow-y-auto mt-4">
         <div v-for="(message, index) in chat" :key="index">
-          <AIResponsePrompt v-if="message.type === 'ai'" :ai_text="message.message" :time="message.time"/>
-          <UserPrompt v-else-if="message.type === 'user'" :user_text="message.message" :time="message.time"/>
+          <AIResponsePrompt v-if="message.type === 'ai'" :ai_text="message.message" :time="message.time" :source="message.source" />
+          <UserPrompt v-else-if="message.type === 'user'" :user_text="message.message" :time="message.time" />
         </div>
       </div>
 
@@ -56,15 +58,13 @@
 
       <div class="flex-grow"></div>
 
-      <ChatInput @submit-query="onSubmitQuery" class="mt-4"/>
-
+      <ChatInput @submit-query="onSubmitQuery" class="mt-4" />
     </div>
   </div>
 </template>
 
 
 <script>
-
 import Intro from './components/Intro.vue'
 import ChatInput from './components/ChatInput.vue'
 import Header from './components/Header.vue'
@@ -93,7 +93,6 @@ export default {
     UserPrompt  
   
   },
-
   data() {
     return {
       isModalOpen: false,
@@ -102,55 +101,55 @@ export default {
       is_chat_showing: false,
       select_mode: false,
       select_button_text: "Select Knowledge",
-      knowledge: [
-        // {
-        //   title: 'Ask questions and find insights',
-        //   url: 'https://www.google.com',
-        //   is_checked: false,
-        // },
-        // {
-        //   title: 'Learning Vue.js',
-        //   url: 'https://vuejs.org',
-        //   is_checked: false,
-        // },
-        // {
-        //   title: 'Vue 3 Documentation',
-        //   url: 'https://v3.vuejs.org',
-        //   is_checked: true,
-        // },
-        // {
-        //   title: 'Tailwind CSS Guide',
-        //   url: 'https://tailwindcss.com',
-        //   is_checked: false,
-        // },
-      ],
-      chat: [
-      ],
+      knowledge: [],
+      chat: [],
     };
   },
   created() {
-      axios({
-        method: "get",
-        url: "http://127.0.0.1:8000/get_knowledge_list",
-        headers: { "Content-Type": "application/json" },
-      }).then((response) => {
-        var urls = response.data.urls;
+    // Get the knowledge list from the backend
+    axios({
+      method: "get",
+      url: "http://127.0.0.1:8000/get_knowledge_list",
+      headers: { "Content-Type": "application/json" },
+    }).then((response) => {
+      var kb_list = response.data.knowledge_list;
 
-        for (let i = 0; i < urls.length; i++) {
-          this.knowledge.push({
-            title: urls[i],
-            url: urls[i],
-            is_checked: false,
-          });
-        }
-        
-        console.log(response);
-      })
-      .catch((error) => {
-        console.log(error);
-      });
+      console.log(response)
+      for (let i = 0; i < kb_list.length; i++) {
+    
+        this.knowledge.push({
+          title: kb_list[i].title,
+          url: kb_list[i].source,
+          is_checked: false,
+        });
+      }
+    }).catch((error) => {
+      console.log(error);
+    });
   },
   methods: {
+
+    // Formats model response into text and sources
+    extractSource(text) {
+
+      let result = {
+        textContent: "",
+        source: []
+      };
+
+      const sourceMatch = text.match(/Source:\s*\{([^}]+)\}/);
+      
+      if (sourceMatch) {
+        result.source = sourceMatch[1].split(',').map(url => url.trim());
+        result.textContent = text.replace(sourceMatch[0], '').trim();
+      } else {
+        result.textContent = text;
+      }
+
+      return result;
+    },
+
+    // Function that activates the select mode or select all mode
     select_knowledge(){
       this.select_mode = !this.select_mode;
 
@@ -160,6 +159,8 @@ export default {
         this.select_button_text = "Select Knowledge";
       }
     },
+
+    // Get formatted current time
     getFormattedTime() {
       const now = new Date();
       let hours = now.getHours();
@@ -172,22 +173,25 @@ export default {
       minutes = minutes < 10 ? '0' + minutes : minutes;
 
       return hours + ':' + minutes + ' ' + ampm;
-  },
+    },
+
+    // Open URL modal
     open_url_modal() {
       this.isModalOpen = true;
     },
+
+    // Open settings modal where API key can be added
     open_settings_modal() {
       this.isSettingsModalOpen = true;
     },
-    onAddingKnowledge(knowledge) {
 
-      var bodyFormData = new FormData();
-      bodyFormData.append('url', knowledge.url);
+    // Add knowledge to the knowledge base
+    onAddingKnowledge(knowledge) {
 
       axios({
         method: "post",
         url: "http://127.0.0.1:8000/add_knowledge",
-        data: bodyFormData,
+        data: [knowledge],
         headers: { "Content-Type": "application/json" },
       }).then((response) => {
         console.log(response);
@@ -195,25 +199,27 @@ export default {
         console.log(response);
       });
 
-      console.log(knowledge)
+      knowledge.is_checked = false;
       this.knowledge.push(knowledge)
       
     },
-    deleteKnowledge(title) {
 
+    // Delete knowledge from the knowledge base
+    deleteKnowledge(title) {
       for (let i = 0; i < this.knowledge.length; i++) {
         if (this.knowledge[i].title === title) {
-
-          var bodyFormData = new FormData();
-          bodyFormData.append('url', this.knowledge[i].url);
-
+          var payload = {
+            urls: [this.knowledge[i].url],
+          }
+          
+          console.log(payload)
           axios({
             method: "post",
             url: "http://127.0.0.1:8000/remove_knowledge",
-            data: bodyFormData,
+            data: payload,
             headers: { "Content-Type": "application/json" },
           }).then((response) => {
-            this.knowledge.push(knowledge)
+            console.log(response);
           }).catch(function (response) {
             console.log(response);
           });
@@ -223,11 +229,14 @@ export default {
         }
       }
     },
+
+    // Submit query to the RAG model
     onSubmitQuery(query) {
 
       this.is_info_showing = false;
       this.is_chat_showing = true;
 
+      // Get the checked URLs or selects all of them
       if (this.select_mode) {
         var checked_urls = this.knowledge.filter((item) => item.is_checked).map((item) => item.url);
 
@@ -237,9 +246,11 @@ export default {
         console.log(checked_urls)
       }
 
-      var bodyFormData = new FormData();
-      bodyFormData.append('query', query);
-      bodyFormData.append('url', checked_urls);
+      // Prepare the payload
+      var payload = {
+        query: query,
+        urls: checked_urls,
+      }
 
       this.chat.push({
         type: 'user',
@@ -250,22 +261,28 @@ export default {
       axios({
         method: "post",
         url: "http://127.0.0.1:8000/rag_query",
-        data: bodyFormData,
+        data: payload,
         headers: { "Content-Type": "application/json" },
         }).then((response) => {
 
+          
+          var formattedResponse = this.extractSource(response.data.result);
+          console.log(formattedResponse)
+          // Add the response to the chat
           this.chat.push({
             type: 'ai',
-            message: response.data.result,
+            message: formattedResponse.textContent,
             time: this.getFormattedTime(),
+            source: formattedResponse.source,
           });
 
-          console.log(response)
         }).catch(function (response) {
           console.log(response);
       });
 
     },
+
+    // Updates when the knowledge is ticked for use in the RAG model
     onKnowledgeTicked(isChecked, url) {
 
       for (let i = 0; i < this.knowledge.length; i++) {
