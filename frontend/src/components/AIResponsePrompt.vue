@@ -18,13 +18,26 @@
             </div>
 
             <!-- Content Section -->
-            <div class="flex-grow rounded-br-3xl ml-4 pb-8">
-                <p class="mr-6">{{ai_text}}</p>
+            <div class="flex-grow rounded-br-3xl ml-4 pb-4">
+                <p class="mr-8">{{ai_text}}</p>
+            </div>
+
+            <div class="ml-4 mr-20 rounded-xl p-2 mb-6 pb-2">
+                <hr class="border-gray-800 dark:border-white opacity-5">
+                <h2 class="font-bold mt-4">Sources:</h2>
+                <div class="pl-8 italic">
+                    <ul>
+                        <li v-for="url in formattedSources" :key="url">
+                            <a :href="url" target="_blank" rel="noopener noreferrer" class="text-blue-500 underline">
+                                {{ url }}
+                            </a>
+                        </li>
+                    </ul>
+                </div>
             </div>
         </div>
     </div>
 </template>
-
 
 <script>
 export default {
@@ -38,6 +51,15 @@ export default {
             type: String,
             required: true,
         },
+        source: {
+            type: Array,
+            required: true,
+        },
     },
+    computed: {
+        formattedSources() {
+            return this.source.map(url => url.replace(/['"]+/g, '').trim());
+        }
+    }
 }
 </script>
