@@ -5,13 +5,15 @@
 #
 ParagonAI is an open-source project designed to make interacting with large bodies of information simple and efficient. By leveraging Retrieval-Augmented Generation (RAG), ParagonAI allows users to build a custom knowledge base by providing URLs, from which it extracts, stores, and indexes relevant content. Users can then ask natural language questions about the information, receiving precise, contextually relevant answers.
 
-<details>
+<details open>
   <summary><strong>Click here to view screenshot section :camera:</strong></summary>
 
   ![Screenshot 1](https://github.com/chuuck/ParagonAI/raw/main/screenshots/screenshot_1.png)
+  ![Screenshot 2](https://github.com/chuuck/ParagonAI/raw/main/screenshots/screenshot_2.png)
 
   <!-- Add more screenshots as needed -->
 </details>
+
 
 
 ## 1. Getting Started :rocket:
